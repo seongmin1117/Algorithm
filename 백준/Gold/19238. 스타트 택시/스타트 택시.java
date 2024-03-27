@@ -51,17 +51,7 @@ public class Main {
     }
     //가장 가까운 손님을 만나면 태우기 , 우선순위 큐 ?
     static void bfs(int x, int y){
-            PriorityQueue<int[]> q = new PriorityQueue<>(new Comparator<int[]>() {
-                @Override
-                public int compare(int[] o1, int[] o2) {
-                    int cmp = Integer.compare(o1[2],o2[2]); //거리 우선
-                    if(cmp !=0) {
-                        return cmp;
-                    } else {
-                        return Integer.compare(o1[0],o2[0]); //행
-                    }
-                }
-            });
+            Queue<int[]> q = new LinkedList<>();
             List<int[]> list = new ArrayList<>();
             boolean[][] visited = new boolean[n][n];
             q.add(new int[] {x,y,0}); //택시 출발 위치와 이동한 거리 추가
@@ -78,7 +68,6 @@ public class Main {
                 }
                 if(!list.isEmpty() && dis == distance &&board[cur_r][cur_c]>1){
                     list.add(new int[] {cur_r,cur_c});
-                    continue;
                 }
                 if(distance>dis) break;
                 // 가장 가까운 손님이면 태우는게 아니라  같은 거리인 큐 다 빼서 확인 ?
