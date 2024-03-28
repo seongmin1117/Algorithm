@@ -7,7 +7,7 @@ public class Main {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
-        HashMap<String,Integer> map = new HashMap<>();
+        Map<String,Integer> map = new TreeMap<>();
 
         for(int i=0; i<n; i++){
             st = new StringTokenizer(br.readLine());
@@ -21,11 +21,8 @@ public class Main {
             }
 
         }
-        List<String> answer = new ArrayList<>(map.keySet());
-        Collections.sort(answer);
-        for(String s : answer){
-            int count = map.get(s);
-            bw.write(s+" "+count);
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            bw.write(entry.getKey()+" "+entry.getValue());
             bw.newLine();
         }
         bw.close();
