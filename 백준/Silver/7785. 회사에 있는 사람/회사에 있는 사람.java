@@ -6,23 +6,23 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
-        HashMap<String,String> hashMap = new HashMap<>();
-        for (int i=0; i<n; i++){
-            StringTokenizer st = new StringTokenizer(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        HashMap<String,Integer> map = new HashMap<>();
+        int n  = Integer.parseInt(st.nextToken());
+        for(int i=0; i<n; i++){
+            st = new StringTokenizer(br.readLine());
             String name = st.nextToken();
-            String check = st.nextToken();
-            if (check.equals("enter")) {
-                hashMap.put(name,name);
-            }else {
-                hashMap.remove(name);
+            if(st.nextToken().equals("leave")){
+                map.remove(name);
+            } else {
+                map.put(name,1);
             }
         }
-        List<String> list = new ArrayList<>(hashMap.values());
-        Collections.sort(list,Collections.reverseOrder());
-
-        for (String str : list){
-            System.out.println(str);
+        List<String> answer = new ArrayList<>(map.keySet());
+        answer.sort(Collections.reverseOrder());
+        for (String s : answer) {
+            System.out.println(s);
         }
+
     }
 }
