@@ -21,33 +21,31 @@ public class Main {
         O(N^2logN)까지 가능하다.
         두 수의 합을 우선 구한 뒤 배열에 저장 O(N^2),  twoSum[i] + a[i] 로 세 수의 합을 구한다.
         세수의 합을 바로 HashSet에서 검색 O(1) 있으면 출력하고 종료
+        TreeSet이 메모리를 많이 차지해서 ? 메모리 초과발생 , 우선순위 큐로 대체
      */
 
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
-        TreeSet<Integer> one = new TreeSet<>(((o1, o2) -> o2-o1));
+        int[] one = new int[n];
         HashSet<Integer> twoSum = new HashSet<>();
-        TreeSet<Integer> asc = new TreeSet<>();
         for (int i=0; i<n; i++){
-            int num = Integer.parseInt(br.readLine());
-            one.add(num);
-            asc.add(num);
+            one[i] = Integer.parseInt(br.readLine());
         }
-        for (Integer i : one) {
-            for (Integer j : one) {
-                twoSum.add(i+j);
+        Arrays.sort(one);
+        for (int i=n-1; i>=0; i--) {
+            for (int j= n-1; j>=0; j--) {
+                twoSum.add(one[i]+one[j]);
             }
         }
-        for (Integer i : one) {
-            for(Integer j : asc){
-                if (twoSum.contains(i-j)){
-                    System.out.println(i);
+        for (int i=n-1; i>=0; i--) {
+            for(Integer j : one){
+                if (twoSum.contains(one[i]-j)){
+                    System.out.println(one[i]);
                     return;
                 }
             }
         }
     }
-
 }
