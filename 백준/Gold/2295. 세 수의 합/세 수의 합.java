@@ -19,33 +19,34 @@ public class Main {
 
         최대 1억개의 부분합이 생기므로.. 시간을 더 줄여야 함.
         O(N^2logN)까지 가능하다.
-        두 수의 합을 우선 구한 뒤 배열에 저장 O(N^2),  twoSum[i] + a[i] 로 세 수의 합을 구한다.
-        세수의 합을 바로 HashSet에서 검색 O(1) 있으면 출력하고 종료
-        TreeSet이 메모리를 많이 차지해서 ? 메모리 초과발생 , 우선순위 큐로 대체
+        두 수의 합을 우선 구한 뒤 HashSet에 저장. (중복 제거 , 검색 O(1)) , 합이 입력 최대보다 클 경우 저장x
+        twoSum = union[x]+union[y] ->  세수의 합 -union[l] = twoSum 이용
+        집합의 두 숫자의 차이를 HashSet에서 검색, 있으면 출력하고 종료
      */
-
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
-        int[] one = new int[n];
+        int[] union = new int[n];
         HashSet<Integer> twoSum = new HashSet<>();
         for (int i=0; i<n; i++){
-            one[i] = Integer.parseInt(br.readLine());
+            union[i] = Integer.parseInt(br.readLine());
         }
-        Arrays.sort(one);
+        Arrays.sort(union);
         for (int i=n-1; i>=0; i--) {
             for (int j= n-1; j>=0; j--) {
-                twoSum.add(one[i]+one[j]);
+                if(union[i]+union[j]>union[n-1]) continue;
+                twoSum.add(union[i]+union[j]);
             }
         }
         for (int i=n-1; i>=0; i--) {
-            for(Integer j : one){
-                if (twoSum.contains(one[i]-j)){
-                    System.out.println(one[i]);
+            for(int j : union){
+                if(union[i]-j<union[0]) continue;
+                if (twoSum.contains(union[i]-j)){
+                    System.out.println(union[i]);
                     return;
                 }
             }
         }
     }
+
 }
