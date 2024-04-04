@@ -40,19 +40,14 @@ public class Main {
         }
         Arrays.sort(arr);
         start = 1;
-        end = Long.MAX_VALUE-1;
-        answer = Long.MAX_VALUE-1;
+        end = (long) arr[0]*m;
+        answer =(long) arr[0]*m; //가장 작은 값 * 사람 수가 최대가 됨
 
-        while (start<end){
+        while (start<=end){
             mid = (start+end)/2;
             func();
         }
-        // 이분탐색이 끝났는데 answer가 갱신이 안됐다면 현재 mid에 최솟값 더한게 최적 값이다.
-        if (answer== Long.MAX_VALUE-1){
-            System.out.println(end);
-        } else {
-            System.out.println(answer);
-        }
+        System.out.println(answer);
     }
     static void func(){
         count = 0;
@@ -62,10 +57,8 @@ public class Main {
         }
         if(count<m){
             start = mid+1;
-        }else if(count>m){
-            end = mid;
-        }else {
-            end = mid;
+        }else if(count>=m){
+            end = mid-1;
             answer = Math.min(answer,mid);
         }
     }
