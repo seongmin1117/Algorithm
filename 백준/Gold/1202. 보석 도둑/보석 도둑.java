@@ -17,11 +17,11 @@ public class Main {
         1 ~ 가방의 최대 무게 ~ 100,000,000
         출력값 long (최대 가격이 겁나 큼)
     3.접근
-        가장 비싼 보석(값이 같으면 무거운 보석)이 들어갈 수 있는 가장 작은 가방 찾기 (그리디)
+        가장 작은 가방에 들어갈 수 있는 가장 비싼 보석 찾기(그리디)
         보석을 가격이 제일 크고 무게가 제일 작은 순으로 정렬 (우선순위 큐)
-        가방을 무게가 작은 순으로 정렬 (정렬)
-        넣을 보석이 없을 때까지 (큐가 빌때까지) , or 가방이 다 찰때까지
-        첫번째 가방부터 첫번째 보석을 넣을 수 있는지 확인 -> 넣었으면 다음 가방
+        가방을 무게가 작은 순으로 정렬 (우선순위 큐)
+        넣을 보석이 없을 때까지 (큐가 빌때까지) or 가방이 다 찰때까지
+        첫번째 가방부터 들어갈 수 있는 보석을 새로운 pq에 넣고 돌리기
 
         --시간초과--
         가방이 중복될 수 있어서 이분탐색말고 다른 자료구조를 사용해서 시간을 줄여야하나?
@@ -29,44 +29,35 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        PriorityQueue<Gem> pq = new PriorityQueue<>(((o1, o2) -> {
-            //무게가 같다면 비싼순
-            if(o1.weight==o2.weight){
-                return (int)(o2.price - o1.price);
-            }
-            // 가벼운 순
-            return  o1.weight-o2.weight;
-        }));
-        PriorityQueue<Gem> pq2 = new PriorityQueue<>(((o1, o2) -> (int)(o2.price - o1.price))); //비싼 순
-        PriorityQueue<Integer> bags = new PriorityQueue<>(); // 가벼운순
+        PriorityQueue<Gem> light = new PriorityQueue<>(((o1, o2) -> o1.weight-o2.weight)); // 무게 내림차순
+        // 현재 가방에 들어갈 수 있는 보석중 비싼순서
+        PriorityQueue<Gem> expensive = new PriorityQueue<>(((o1, o2) -> (int)(o2.price - o1.price)));
+        PriorityQueue<Integer> bags = new PriorityQueue<>(); // 가방의 최대 크기가 작은순
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken()); //보석 수
         int k = Integer.parseInt(st.nextToken()); //가방 수
 
-        int min_weight = Integer.MAX_VALUE; // 보석의 최소 무게
         for(int i=0; i<n; i++){
             st = new StringTokenizer(br.readLine());
             int weight = Integer.parseInt(st.nextToken());
             long price = Long.parseLong(st.nextToken());
-            pq.add(new Gem(weight,price));
-            min_weight = Math.min(weight,min_weight);
+            light.add(new Gem(weight,price)); // 보석 무게 내림차순
         }
-        int max_weight = -1; // 가방의 최대 무게
+
         for(int i=0; i<k; i++){
             int weight = Integer.parseInt(br.readLine());
-            if(weight<min_weight) continue; // 보석의 최소 무게보다 작으면 버리기
-            bags.add(weight);
-            max_weight = Math.max(weight,max_weight);
+            bags.add(weight); // 가방 크기 내림차순
         }
-        long answer = 0;
-        while (!bags.isEmpty()){
+        long answer = 0; // 출력값 long
+        while (!bags.isEmpty()){ //가방이 빌때까지
             int weight = bags.poll();
-            while (!pq.isEmpty()&& pq.peek().weight<=weight){
-                pq2.add(pq.poll());
+            // 현재 가방의 무게보다 작은 보석들을 비싼순으로 정렬
+            while (!light.isEmpty()&& light.peek().weight<=weight){
+                expensive.add(light.poll());
             }
-            if(pq2.isEmpty()) continue;
-            answer += pq2.poll().price;
-
+            // 가방에 들어갈 보석이 없으면 넘어가기
+            if(expensive.isEmpty()) continue;
+            answer += expensive.poll().price;
         }
         System.out.println(answer);
 
