@@ -1,70 +1,77 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
+
 
 public class Main {
-    /*
-    벽부수고 이동하기
-     */
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int r = Integer.parseInt(st.nextToken());
-        int c = Integer.parseInt(st.nextToken());
-        int[][] board = new int[r][c];
-        int[][][] dis  = new int[r][c][2];
-        int[] dr = {1,0,-1,0};
-        int[] dc = {0,-1,0,1};
-        for (int i=0; i<r; i++){
-            char[] ch = br.readLine().toCharArray();
-            for (int j=0; j<c; j++){
-                board[i][j] = ch[j]-'0';
-            }
-        }
-        Queue<Node> q = new ArrayDeque<>();
-        q.add(new Node(0,0,0));
-        dis[0][0][0]=1; // 시작도 카운팅
-        
-        while (!q.isEmpty()){
-            Node node = q.poll();
-            // 도착하면 출력 후 종료
-            if (node.r ==r-1 && node.c == c-1){
-                System.out.println(dis[node.r][node.c][node.broken]);
-                return;
-            }
-            for (int d=0; d<4; d++){
-                int nr = node.r +dr[d];
-                int nc = node.c +dc[d];
 
-                if (nr<0 || nc<0 || nr>=r || nc>=c) continue;
+    static class Node {
+        int breakCnt, r, c;
 
-                // 벽이 아니고 방문한 적이 없을 때 거리 동기화
-                if (board[nr][nc]==0 && dis[nr][nc][node.broken]==0){
-                    dis[nr][nc][node.broken] = dis[node.r][node.c][node.broken]+1;
-                    q.add(new Node(nr,nc, node.broken));
-                }
-                // 벽인데 부순적이 없고 부수고 방문한 적이 없을 때, 부수고 거리 동기화
-                if (board[nr][nc]==1 && node.broken==0 && dis[nr][nc][1]==0){
-                    dis[nr][nc][1] = dis[node.r][node.c][node.broken]+1;
-                    q.add(new Node(nr,nc,1));
-                }
-
-            }
-        }
-        System.out.println(-1);
-    }
-    static class Node{
-        int r;
-        int c;
-        int broken;
-        Node(int r, int c, int broken) {
+        Node(int breakCnt, int r, int c) {
+            this.breakCnt = breakCnt;
             this.r = r;
             this.c = c;
-            this.broken = broken;
+        }
+    }
+    static final int INF = 1_000_000_000;
+    static int N, M;
+    static char[][] grid;
+    static int[][][] dist;
+    static ArrayDeque<Node> dq = new ArrayDeque<>();
+    static int[] dr = {0, 1, 0, -1};
+    static int[] dc = {1, 0, -1, 0};
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        grid = new char[N][];
+        for (int r = 0; r < N; r++) {
+            grid[r] = br.readLine().toCharArray();
         }
 
+        dist = new int[2][N][M];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < N; j++) {
+                Arrays.fill(dist[i][j], INF);
+            }
+        }
+        dq.offerLast(new Node(0, 0, 0));
+        dist[0][0][0] = 1;
+
+        while (!dq.isEmpty()) {
+            Node cur = dq.pollFirst();
+
+            int curDist = dist[cur.breakCnt][cur.r][cur.c];
+
+            for (int d = 0; d < dr.length; d++) {
+                int nr = cur.r + dr[d];
+                int nc = cur.c + dc[d];
+
+                if (nr < 0 || nr >= N || nc < 0 || nc >= M) {
+                    continue;
+                }
+
+                int demandBreak = grid[nr][nc] - '0';
+                int nextBreakCnt = cur.breakCnt + demandBreak;
+                if (nextBreakCnt == 2) {
+                    continue;
+                }
+
+                if (dist[nextBreakCnt][nr][nc] != INF) {
+                    continue;
+                }
+
+                dq.offerLast(new Node(nextBreakCnt, nr, nc));
+                dist[nextBreakCnt][nr][nc] = curDist + 1;
+            }
+        }
+
+        int answer = INF;
+        for (int i = 0; i < 2; i++) {
+            answer = Math.min(answer, dist[i][N - 1][M - 1]);
+        }
+        System.out.println(answer == INF ? -1 : answer);
     }
 }
