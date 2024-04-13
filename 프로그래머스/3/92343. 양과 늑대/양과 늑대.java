@@ -1,16 +1,15 @@
-import java.io.*;
 import java.util.*;
 class Solution {
-    static int max;
-    static boolean[] visited;
-    public int solution(int[] info, int[][] edges) {
+    int max;
+    boolean[] visited;
+    int solution(int[] info, int[][] edges) {
         int n = info.length;
         visited = new boolean[n];
         visited[0] = true;
         backtrack(1,0,edges,info);
         return max;
     }
-    static void backtrack(int sheep, int wolf, int[][] edges, int[] info){
+    void backtrack(int sheep, int wolf, int[][] edges, int[] info){
         if(sheep<=wolf) return;
         max = (sheep > max ? sheep : max);
         for(int i=0; i<edges.length; i++){
